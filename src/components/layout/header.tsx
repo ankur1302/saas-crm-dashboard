@@ -18,14 +18,14 @@ export function Header() {
     return (
         <header className="flex h-14 items-center gap-4 bg-white px-6 shadow-sm z-20">
             <div className="flex flex-1 items-center gap-4">
-                <div className="relative w-full max-w-sm">
+                {/* <div className="relative w-full max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
                     <input
                         type="search"
                         placeholder="Global search..."
                         className="w-full rounded-md border border-zinc-200 bg-zinc-50 pl-9 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
-                </div>
+                </div> */}
             </div>
             <div className="flex items-center gap-4">
                 <button className="text-zinc-500 hover:text-zinc-700">
