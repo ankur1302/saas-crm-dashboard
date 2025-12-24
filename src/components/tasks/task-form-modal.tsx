@@ -55,124 +55,150 @@ export function TaskFormModal({
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>{children}</Dialog.Trigger>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" />
-                <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl focus:outline-none z-50 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between mb-4">
-                        <Dialog.Title className="text-lg font-semibold text-zinc-900">
-                            {initialData ? "Edit Task" : "Create Task"}
+                <Dialog.Overlay className="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+                <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white shadow-2xl focus:outline-none z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200 overflow-hidden">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50/50">
+                        <Dialog.Title className="text-xl font-semibold text-zinc-900">
+                            {initialData ? "Edit Task" : "Create New Task"}
                         </Dialog.Title>
-                        <Dialog.Close className="rounded-full p-1.5 hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors">
-                            <X className="h-4 w-4" />
+                        <Dialog.Close className="rounded-full p-2 hover:bg-zinc-200/50 text-zinc-400 hover:text-zinc-600 transition-all duration-200">
+                            <X className="h-5 w-5" />
                         </Dialog.Close>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && (
-                            <div className="p-3 text-sm text-red-600 bg-red-50 rounded border border-red-200">
-                                {error}
-                            </div>
-                        )}
+                    <form onSubmit={handleSubmit}>
+                        <div className="p-6 space-y-5">
+                            {error && (
+                                <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm flex items-center shadow-sm">
+                                    <span className="bg-red-100 p-1 rounded-full mr-2">
+                                        <X className="w-3 h-3" />
+                                    </span>
+                                    {error}
+                                </div>
+                            )}
 
-                        <div>
-                            <label htmlFor="title" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                Task Title <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="title"
-                                name="title"
-                                required
-                                defaultValue={initialData?.title}
-                                className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="e.g. Call John Doe"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="description" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows={3}
-                                defaultValue={initialData?.description || ""}
-                                className="w-full rounded border border-zinc-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none"
-                                placeholder="Add task details..."
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="due_date" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                    Due Date
+                            <div className="space-y-1.5">
+                                <label htmlFor="title" className="text-sm font-medium text-zinc-700">
+                                    Task Title <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    id="due_date"
-                                    name="due_date"
-                                    type="date"
-                                    defaultValue={initialData?.due_date ? format(new Date(initialData.due_date), "yyyy-MM-dd") : ""}
-                                    className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                                    id="title"
+                                    name="title"
+                                    required
+                                    defaultValue={initialData?.title}
+                                    className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
+                                    placeholder="e.g. Call John Doe"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="lead_id" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                    Related Lead
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="description" className="text-sm font-medium text-zinc-700">
+                                    Description
                                 </label>
-                                <select
-                                    id="lead_id"
-                                    name="lead_id"
-                                    defaultValue={initialData?.lead_id || ""}
-                                    className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all bg-white"
-                                >
-                                    <option value="">No Lead</option>
-                                    {leads.map((lead) => (
-                                        <option key={lead.id} value={lead.id}>
-                                            {lead.first_name} {lead.last_name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows={3}
+                                    defaultValue={initialData?.description || ""}
+                                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400 resize-none"
+                                    placeholder="Add task details..."
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <div className="space-y-1.5">
+                                    <label htmlFor="due_date" className="text-sm font-medium text-zinc-700">
+                                        Due Date
+                                    </label>
+                                    <input
+                                        id="due_date"
+                                        name="due_date"
+                                        type="date"
+                                        defaultValue={initialData?.due_date ? format(new Date(initialData.due_date), "yyyy-MM-dd") : ""}
+                                        className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="lead_id" className="text-sm font-medium text-zinc-700">
+                                        Related Lead
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="lead_id"
+                                            name="lead_id"
+                                            defaultValue={initialData?.lead_id || ""}
+                                            className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
+                                        >
+                                            <option value="">No Lead</option>
+                                            {leads.map((lead) => (
+                                                <option key={lead.id} value={lead.id}>
+                                                    {lead.first_name} {lead.last_name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <div className="space-y-1.5">
+                                    <label htmlFor="status" className="text-sm font-medium text-zinc-700">
+                                        Status
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="status"
+                                            name="status"
+                                            defaultValue={initialData?.status || "pending"}
+                                            className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
+                                        >
+                                            <option value="pending">Pending</option>
+                                            <option value="in_progress">In Progress</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="priority" className="text-sm font-medium text-zinc-700">
+                                        Priority
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="priority"
+                                            name="priority"
+                                            defaultValue={initialData?.priority || "medium"}
+                                            className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
+                                        >
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="status" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                    Status
-                                </label>
-                                <select
-                                    id="status"
-                                    name="status"
-                                    defaultValue={initialData?.status || "pending"}
-                                    className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all bg-white"
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="priority" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                    Priority
-                                </label>
-                                <select
-                                    id="priority"
-                                    name="priority"
-                                    defaultValue={initialData?.priority || "medium"}
-                                    className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all bg-white"
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-2">
+                        <div className="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100 bg-zinc-50/50">
                             <Dialog.Close asChild>
                                 <button
                                     type="button"
-                                    className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
+                                    className="h-10 px-5 rounded-lg border border-zinc-200 text-sm font-medium text-zinc-600 bg-white hover:bg-zinc-50 hover:border-zinc-300 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-all duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -180,7 +206,7 @@ export function TaskFormModal({
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                className="h-10 px-6 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 inline-flex items-center"
                             >
                                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                 {initialData ? "Save Changes" : "Create Task"}

@@ -26,56 +26,67 @@ export function InviteMemberModal({
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>{children}</Dialog.Trigger>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" />
-                <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl focus:outline-none z-50 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between mb-4">
-                        <Dialog.Title className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-                            <UserPlus className="h-5 w-5 text-blue-600" />
+                <Dialog.Overlay className="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+                <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white shadow-2xl focus:outline-none z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200 overflow-hidden">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50/50">
+                        <Dialog.Title className="text-xl font-semibold text-zinc-900 flex items-center gap-2">
+                            <div className="p-2 bg-blue-50 rounded-lg">
+                                <UserPlus className="h-5 w-5 text-blue-600" />
+                            </div>
                             Invite Team Member
                         </Dialog.Title>
-                        <Dialog.Close className="rounded-full p-1.5 hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors">
-                            <X className="h-4 w-4" />
+                        <Dialog.Close className="rounded-full p-2 hover:bg-zinc-200/50 text-zinc-400 hover:text-zinc-600 transition-all duration-200">
+                            <X className="h-5 w-5" />
                         </Dialog.Close>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label htmlFor="email" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                Email Address <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    required
-                                    className="w-full h-9 rounded border border-zinc-300 pl-9 pr-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
-                                    placeholder="colleague@company.com"
-                                />
+                    <form onSubmit={handleSubmit}>
+                        <div className="p-6 space-y-5">
+                            <div className="space-y-1.5">
+                                <label htmlFor="email" className="text-sm font-medium text-zinc-700">
+                                    Email Address <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        required
+                                        className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 pl-11 pr-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
+                                        placeholder="colleague@company.com"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="role" className="text-sm font-medium text-zinc-700">
+                                    Role
+                                </label>
+                                <div className="relative">
+                                    <select
+                                        id="role"
+                                        name="role"
+                                        className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
+                                    >
+                                        <option value="member">Member</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="role" className="block text-xs font-semibold text-zinc-700 mb-1">
-                                Role
-                            </label>
-                            <select
-                                id="role"
-                                name="role"
-                                className="w-full h-9 rounded border border-zinc-300 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all bg-white"
-                            >
-                                <option value="member">Member</option>
-                                <option value="admin">Admin</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-2">
+                        <div className="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100 bg-zinc-50/50">
                             <Dialog.Close asChild>
                                 <button
                                     type="button"
-                                    className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
+                                    className="h-10 px-5 rounded-lg border border-zinc-200 text-sm font-medium text-zinc-600 bg-white hover:bg-zinc-50 hover:border-zinc-300 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-all duration-200"
                                 >
                                     Cancel
                                 </button>
@@ -83,7 +94,7 @@ export function InviteMemberModal({
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                className="h-10 px-6 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 inline-flex items-center"
                             >
                                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                 Send Invite
