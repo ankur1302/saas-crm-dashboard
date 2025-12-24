@@ -42,10 +42,16 @@ export function Header() {
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Portal>
                         <DropdownMenu.Content className="mr-6 mt-2 w-48 rounded-md border border-zinc-200 bg-white p-1 shadow-lg z-50">
-                            <DropdownMenu.Item className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 outline-none hover:bg-zinc-100">
+                            <DropdownMenu.Item
+                                onSelect={() => router.push("/profile")}
+                                className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 outline-none hover:bg-zinc-100"
+                            >
                                 Profile
                             </DropdownMenu.Item>
-                            <DropdownMenu.Item className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 outline-none hover:bg-zinc-100">
+                            <DropdownMenu.Item
+                                onSelect={() => router.push("/settings")}
+                                className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 outline-none hover:bg-zinc-100"
+                            >
                                 Settings
                             </DropdownMenu.Item>
                             <DropdownMenu.Separator className="my-1 h-px bg-zinc-100" />
