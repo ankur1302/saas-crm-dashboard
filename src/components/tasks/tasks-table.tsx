@@ -2,8 +2,7 @@
 
 import { useTransition, useState } from "react";
 import { formatDistanceToNow, format } from "date-fns";
-import { Check, Edit, Trash2, MoreHorizontal, Loader2, Calendar } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Edit, Trash2, Loader2, Calendar } from "lucide-react";
 import { deleteTask } from "@/app/actions/tasks";
 import { TaskFormModal } from "./task-form-modal";
 
@@ -20,11 +19,14 @@ type Task = {
 
 export function TasksTable({ tasks }: { tasks: Task[] }) {
     const [isPending, startTransition] = useTransition();
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const handleDelete = (id: string) => {
         if (!confirm("Are you sure you want to delete this task?")) return;
+        setDeletingId(id);
         startTransition(async () => {
             await deleteTask(id);
+            setDeletingId(null);
         });
     };
 
@@ -101,31 +103,26 @@ export function TasksTable({ tasks }: { tasks: Task[] }) {
                                         {formatDistanceToNow(new Date(task.created_at), { addSuffix: true })}
                                     </td>
                                     <td className="px-4 py-3 text-right">
-                                        <DropdownMenu.Root>
-                                            <DropdownMenu.Trigger asChild>
-                                                <button className="p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                        <div className="flex items-center justify-end gap-2">
+                                            <TaskFormModal initialData={task}>
+                                                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
+                                                    <Edit className="h-3.5 w-3.5" />
+                                                    Edit
                                                 </button>
-                                            </DropdownMenu.Trigger>
-                                            <DropdownMenu.Portal>
-                                                <DropdownMenu.Content className="min-w-[140px] bg-white border border-zinc-200 rounded-md shadow-lg p-1 z-50">
-                                                    <TaskFormModal initialData={task}>
-                                                        <DropdownMenu.Item onSelect={(e) => e.preventDefault()} className="flex items-center px-2 py-1.5 text-sm cursor-pointer rounded-sm hover:bg-zinc-50 text-zinc-700 outline-none">
-                                                            <Edit className="mr-2 h-3.5 w-3.5 text-zinc-400" />
-                                                            Edit
-                                                        </DropdownMenu.Item>
-                                                    </TaskFormModal>
-                                                    <DropdownMenu.Item
-                                                        onSelect={() => handleDelete(task.id)}
-                                                        disabled={isPending}
-                                                        className="flex items-center px-2 py-1.5 text-sm cursor-pointer rounded-sm hover:bg-red-50 text-red-600 outline-none"
-                                                    >
-                                                        {isPending ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Trash2 className="mr-2 h-3.5 w-3.5" />}
-                                                        Delete
-                                                    </DropdownMenu.Item>
-                                                </DropdownMenu.Content>
-                                            </DropdownMenu.Portal>
-                                        </DropdownMenu.Root>
+                                            </TaskFormModal>
+                                            <button
+                                                onClick={() => handleDelete(task.id)}
+                                                disabled={deletingId === task.id}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {deletingId === task.id ? (
+                                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                ) : (
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                )}
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

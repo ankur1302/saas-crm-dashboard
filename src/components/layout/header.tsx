@@ -48,12 +48,6 @@ export function Header() {
                             >
                                 Profile
                             </DropdownMenu.Item>
-                            <DropdownMenu.Item
-                                onSelect={() => router.push("/settings")}
-                                className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 outline-none hover:bg-zinc-100"
-                            >
-                                Settings
-                            </DropdownMenu.Item>
                             <DropdownMenu.Separator className="my-1 h-px bg-zinc-100" />
                             <DropdownMenu.Item
                                 onSelect={handleSignOut}

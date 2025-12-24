@@ -2,8 +2,7 @@
 
 import { useTransition, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { Check, Edit, Trash2, MoreHorizontal, Loader2 } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Check, Edit, Trash2, Loader2 } from "lucide-react";
 import { deleteLead, deleteLeads } from "@/app/actions/leads";
 import { LeadFormModal } from "./lead-form-modal";
 
@@ -138,31 +137,26 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                                         {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
                                     </td>
                                     <td className="px-4 py-2 text-right">
-                                        <DropdownMenu.Root>
-                                            <DropdownMenu.Trigger asChild>
-                                                <button className="p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                        <div className="flex items-center justify-end gap-2">
+                                            <LeadFormModal initialData={lead}>
+                                                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
+                                                    <Edit className="h-3.5 w-3.5" />
+                                                    Edit
                                                 </button>
-                                            </DropdownMenu.Trigger>
-                                            <DropdownMenu.Portal>
-                                                <DropdownMenu.Content className="min-w-[140px] bg-white border border-zinc-200 rounded-md shadow-lg p-1 z-50">
-                                                    <LeadFormModal initialData={lead}>
-                                                        <DropdownMenu.Item onSelect={(e) => e.preventDefault()} className="flex items-center px-2 py-1.5 text-sm cursor-pointer rounded-sm hover:bg-zinc-50 text-zinc-700 outline-none">
-                                                            <Edit className="mr-2 h-3.5 w-3.5 text-zinc-400" />
-                                                            Edit
-                                                        </DropdownMenu.Item>
-                                                    </LeadFormModal>
-                                                    <DropdownMenu.Item
-                                                        onSelect={() => handleDelete(lead.id)}
-                                                        disabled={isPending}
-                                                        className="flex items-center px-2 py-1.5 text-sm cursor-pointer rounded-sm hover:bg-red-50 text-red-600 outline-none"
-                                                    >
-                                                        {isPending ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Trash2 className="mr-2 h-3.5 w-3.5" />}
-                                                        Delete
-                                                    </DropdownMenu.Item>
-                                                </DropdownMenu.Content>
-                                            </DropdownMenu.Portal>
-                                        </DropdownMenu.Root>
+                                            </LeadFormModal>
+                                            <button
+                                                onClick={() => handleDelete(lead.id)}
+                                                disabled={isPending}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isPending ? (
+                                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                ) : (
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                )}
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
