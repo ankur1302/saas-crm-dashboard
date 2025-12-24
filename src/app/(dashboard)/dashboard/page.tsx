@@ -23,6 +23,7 @@ export default async function DashboardPage() {
             color: "text-blue-600",
             bg: "bg-blue-50",
             href: "/leads",
+            percent: 12.5,
         },
         {
             name: "Pending Tasks",
@@ -31,6 +32,7 @@ export default async function DashboardPage() {
             color: "text-orange-600",
             bg: "bg-orange-50",
             href: "/tasks",
+            percent: 2.5,
         },
         {
             name: "Activity Logs",
@@ -39,6 +41,7 @@ export default async function DashboardPage() {
             color: "text-purple-600",
             bg: "bg-purple-50",
             href: "/logs",
+            percent: 10.5,
         },
         {
             name: "Conversion Rate",
@@ -47,6 +50,7 @@ export default async function DashboardPage() {
             color: "text-green-600",
             bg: "bg-green-50",
             href: "#",
+            percent: 8.5,
         },
     ];
 
@@ -91,7 +95,7 @@ export default async function DashboardPage() {
                         <div className="mt-4 flex items-center text-xs text-slate-500">
                             <span className="text-emerald-600 font-medium flex items-center mr-2 bg-emerald-50 px-1.5 py-0.5 rounded">
                                 <TrendingUp className="w-3 h-3 mr-1" />
-                                +2.5%
+                                +{stat.percent}%
                             </span>
                             <span>from last month</span>
                         </div>
