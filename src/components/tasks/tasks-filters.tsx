@@ -51,8 +51,7 @@ export function TasksFilters() {
                     <option value="all">Status: All</option>
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="done">Done</option>
                 </select>
 
                 <select
@@ -64,6 +63,7 @@ export function TasksFilters() {
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
                 </select>
             </div>
         </div>

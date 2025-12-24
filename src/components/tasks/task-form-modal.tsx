@@ -2,29 +2,25 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Calendar } from "lucide-react";
 import { createTask, updateTask } from "@/app/actions/tasks";
-import { format } from "date-fns";
 
 type Task = {
     id: string;
     title: string;
     description: string | null;
-    due_date: string | null;
     status: string;
     priority: string;
-    lead_id: string | null;
-    assigned_to: string | null;
+    due_date: string | null;
+    assigned_to: string;
 };
 
 export function TaskFormModal({
     children,
     initialData,
-    leads = [],
 }: {
     children: React.ReactNode;
     initialData?: Task;
-    leads?: any[];
 }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,14 +34,21 @@ export function TaskFormModal({
         const formData = new FormData(e.currentTarget);
 
         try {
+            let result;
             if (initialData) {
-                await updateTask(initialData.id, formData);
+                result = await updateTask(initialData.id, formData);
             } else {
-                await createTask(formData);
+                result = await createTask(formData);
             }
+
+            if (!result.success && result.error) {
+                setError(result.error);
+                return;
+            }
+            
             setOpen(false);
         } catch (err) {
-            setError("Failed to save task. Please try again.");
+            setError("An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -79,7 +82,7 @@ export function TaskFormModal({
 
                             <div className="space-y-1.5">
                                 <label htmlFor="title" className="text-sm font-medium text-zinc-700">
-                                    Task Title <span className="text-red-500">*</span>
+                                    Title <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="title"
@@ -87,7 +90,7 @@ export function TaskFormModal({
                                     required
                                     defaultValue={initialData?.title}
                                     className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
-                                    placeholder="e.g. Call John Doe"
+                                    placeholder="e.g. Follow up with Acme Corp"
                                 />
                             </div>
 
@@ -98,51 +101,11 @@ export function TaskFormModal({
                                 <textarea
                                     id="description"
                                     name="description"
-                                    rows={3}
                                     defaultValue={initialData?.description || ""}
+                                    rows={3}
                                     className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400 resize-none"
                                     placeholder="Add task details..."
                                 />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5">
-                                <div className="space-y-1.5">
-                                    <label htmlFor="due_date" className="text-sm font-medium text-zinc-700">
-                                        Due Date
-                                    </label>
-                                    <input
-                                        id="due_date"
-                                        name="due_date"
-                                        type="date"
-                                        defaultValue={initialData?.due_date ? format(new Date(initialData.due_date), "yyyy-MM-dd") : ""}
-                                        className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label htmlFor="lead_id" className="text-sm font-medium text-zinc-700">
-                                        Related Lead
-                                    </label>
-                                    <div className="relative">
-                                        <select
-                                            id="lead_id"
-                                            name="lead_id"
-                                            defaultValue={initialData?.lead_id || ""}
-                                            className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
-                                        >
-                                            <option value="">No Lead</option>
-                                            {leads.map((lead) => (
-                                                <option key={lead.id} value={lead.id}>
-                                                    {lead.first_name} {lead.last_name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
-                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-5">
@@ -159,8 +122,7 @@ export function TaskFormModal({
                                         >
                                             <option value="pending">Pending</option>
                                             <option value="in_progress">In Progress</option>
-                                            <option value="completed">Completed</option>
-                                            <option value="cancelled">Cancelled</option>
+                                            <option value="done">Done</option>
                                         </select>
                                         <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,6 +145,7 @@ export function TaskFormModal({
                                             <option value="low">Low</option>
                                             <option value="medium">Medium</option>
                                             <option value="high">High</option>
+                                            <option value="urgent">Urgent</option>
                                         </select>
                                         <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-zinc-500">
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -192,6 +155,23 @@ export function TaskFormModal({
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="due_date" className="text-sm font-medium text-zinc-700">
+                                    Due Date
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        id="due_date"
+                                        name="due_date"
+                                        type="date"
+                                        defaultValue={initialData?.due_date || ""}
+                                        className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 placeholder:text-zinc-400"
+                                    />
+                                    <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                                </div>
+                            </div>
+
                         </div>
 
                         <div className="flex justify-end gap-3 px-6 py-4 border-t border-zinc-100 bg-zinc-50/50">

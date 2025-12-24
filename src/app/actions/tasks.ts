@@ -2,21 +2,23 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { triggerWebhook } from "@/lib/webhook";
+import { logAction } from "@/lib/logger";
 
 export async function createTask(data: FormData) {
     const supabase = await createClient();
-    const userData = await supabase.auth.getUser();
-    const userId = userData.data.user?.id;
+    const userResponse = await supabase.auth.getUser();
+    
+    if (!userResponse.data.user) {
+        return { success: false, error: "Unauthorized" };
+    }
 
     const rawData = {
         title: data.get("title") as string,
         description: data.get("description") as string,
-        due_date: data.get("due_date") ? new Date(data.get("due_date") as string).toISOString() : null,
         status: data.get("status") as string,
         priority: data.get("priority") as string,
-        lead_id: (data.get("lead_id") as string) || null,
-        assigned_to: data.get("assign_to_me") === "on" ? userId : null,
+        due_date: data.get("due_date") ? (data.get("due_date") as string) : null,
+        assigned_to: userResponse.data.user.id,
     };
 
     const { data: task, error } = await supabase.from("tasks").insert(rawData).select("id").single();
@@ -25,36 +27,49 @@ export async function createTask(data: FormData) {
         return { success: false, error: error.message };
     }
 
-    await triggerWebhook({ action: "create", entity: "task", entityId: task.id });
+    // Log the action
+    await logAction({
+        action: "created",
+        entityType: "TASK",
+        entityId: task.id,
+        message: `Task '${rawData.title}' was created`,
+        title: "Task Created",
+    });
+
     revalidatePath("/tasks");
     return { success: true };
 }
 
 export async function updateTask(id: string, data: FormData) {
     const supabase = await createClient();
-    const userData = await supabase.auth.getUser();
-    const userId = userData.data.user?.id;
 
-    const rawData: any = {
+    const rawData = {
         title: data.get("title") as string,
         description: data.get("description") as string,
-        due_date: data.get("due_date") ? new Date(data.get("due_date") as string).toISOString() : null,
         status: data.get("status") as string,
         priority: data.get("priority") as string,
-        lead_id: (data.get("lead_id") as string) || null,
+        due_date: data.get("due_date") ? (data.get("due_date") as string) : null,
+        updated_at: new Date().toISOString(),
     };
 
-    if (data.get("assign_to_me") === "on") {
-        rawData.assigned_to = userId;
-    }
-
-    const { error } = await supabase.from("tasks").update(rawData).eq("id", id);
+    const { error } = await supabase
+        .from("tasks")
+        .update(rawData)
+        .eq("id", id);
 
     if (error) {
         return { success: false, error: error.message };
     }
 
-    await triggerWebhook({ action: "update", entity: "task", entityId: id });
+    // Log the action
+    await logAction({
+        action: "updated",
+        entityType: "TASK",
+        entityId: id,
+        message: `Task '${rawData.title}' was updated`,
+        title: "Task Updated",
+    });
+
     revalidatePath("/tasks");
     return { success: true };
 }
@@ -67,7 +82,15 @@ export async function deleteTask(id: string) {
         return { success: false, error: error.message };
     }
 
-    await triggerWebhook({ action: "delete", entity: "task", entityId: id });
+    // Log the action
+    await logAction({
+        action: "deleted",
+        entityType: "TASK",
+        entityId: id,
+        message: "Task was deleted",
+        title: "Task Deleted",
+    });
+
     revalidatePath("/tasks");
     return { success: true };
 }

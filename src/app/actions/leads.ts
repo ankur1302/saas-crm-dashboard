@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { triggerWebhook } from "@/lib/webhook";
+import { logAction } from "@/lib/logger";
 
 export async function createLead(data: FormData) {
     const supabase = await createClient();
@@ -18,11 +19,20 @@ export async function createLead(data: FormData) {
         source: "Manual",
     };
 
-    const { data: lead, error } = await supabase.from("leads").insert(rawData).select("id").single();
+    const { data: lead, error } = await supabase.from("leads").insert(rawData).select("id, first_name, last_name").single();
 
     if (error) {
         return { success: false, error: error.message };
     }
+
+    // Log the action
+    await logAction({
+        action: "created",
+        entityType: "LEAD",
+        entityId: lead.id,
+        message: `Lead '${lead.first_name} ${lead.last_name}' was created`,
+        title: "Lead Created",
+    });
 
     await triggerWebhook({ action: "create", entity: "lead", entityId: lead.id });
     revalidatePath("/leads");
@@ -50,6 +60,15 @@ export async function updateLead(id: string, data: FormData) {
         return { success: false, error: error.message };
     }
 
+    // Log the action
+    await logAction({
+        action: "updated",
+        entityType: "LEAD",
+        entityId: id,
+        message: `Lead '${rawData.first_name} ${rawData.last_name}' was updated`,
+        title: "Lead Updated",
+    });
+
     await triggerWebhook({ action: "update", entity: "lead", entityId: id });
     revalidatePath("/leads");
     return { success: true };
@@ -62,6 +81,15 @@ export async function deleteLead(id: string) {
     if (error) {
         return { success: false, error: error.message };
     }
+
+    // Log the action
+    await logAction({
+        action: "deleted",
+        entityType: "LEAD",
+        entityId: id,
+        message: "Lead was deleted",
+        title: "Lead Deleted",
+    });
 
     await triggerWebhook({ action: "delete", entity: "lead", entityId: id });
     revalidatePath("/leads");

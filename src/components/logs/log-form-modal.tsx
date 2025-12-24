@@ -103,17 +103,16 @@ export function LogFormModal({
 
                             <div className="space-y-1.5">
                                 <label htmlFor="lead_id" className="text-sm font-medium text-zinc-700">
-                                    Related Lead
+                                    Related Lead (Optional)
                                 </label>
                                 <div className="relative">
                                     <select
                                         id="lead_id"
                                         name="lead_id"
-                                        required
                                         defaultValue={initialData?.lead_id || ""}
                                         className="w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm transition-all outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 appearance-none cursor-pointer"
                                     >
-                                        <option value="" disabled>Select a lead</option>
+                                        <option value="">No lead selected</option>
                                         {leads.map((lead) => (
                                             <option key={lead.id} value={lead.id}>
                                                 {lead.first_name} {lead.last_name}
